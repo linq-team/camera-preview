@@ -2,14 +2,21 @@
 <h3 align="center">Capacitor Camera Preview</h3>
 <p align="center"><strong><code>@capacitor-community/camera-preview</code></strong></p>
 <br>
-<p align="center"><strong>CAPACITOR 3</strong></p><br>
+<p align="center"><strong>CAPACITOR 5</strong></p><br>
 
 <p align="center">
   Capacitor plugin that allows camera interaction from Javascript and HTML<br>(based on cordova-plugin-camera-preview).
 </p>
 <br>
+Version 6 of this plugin requires Capacitor 6.
 
-Version 2 of this plugin is compatible with Ionic 5+ and Capacitor 3. If your project uses Capacitor 2, please make sure you install [version 1](https://github.com/capacitor-community/camera-preview/releases/tag/v1.2.1) of this plugin.
+If you are using Capacitor 5, use [version 5](https://github.com/capacitor-community/camera-preview/releases/tag/v5.0.0)
+
+If you are using Capacitor 4, use [version 4](https://github.com/capacitor-community/camera-preview/releases/tag/v4.0.0)
+
+If you are using Capacitor 3, use [version 3](https://github.com/capacitor-community/camera-preview/releases/tag/v3.1.2)
+
+If you are using Capacitor 2, use [version 1](https://github.com/capacitor-community/camera-preview/releases/tag/v1.2.1)
 
 **PR's are greatly appreciated.**
 
@@ -45,17 +52,30 @@ npx cap sync
 ```
 
 ## Extra Android installation steps
+**Important** `camera-preview` 3+ requires Gradle 7. If you are using Gradle 4, please use [version 2](https://github.com/capacitor-community/camera-preview/tree/v2.1.0) of this plugin.
+
 Open `android/app/src/main/AndroidManifest.xml` and above the closing `</manifest>` tag add this line to request the CAMERA permission:
 ```xml
 <uses-permission android:name="android.permission.CAMERA" />
 ```
 For more help consult the [Capacitor docs](https://capacitorjs.com/docs/android/configuration#configuring-androidmanifestxml).
 
+### Variables
+
+This plugin will use the following project variables (defined in your app's `variables.gradle` file):
+
+- `androidxExifInterfaceVersion`: version of `androidx.exifinterface:exifinterface` (default: `1.3.6`)
+
 ## Extra iOS installation steps
-You will need to add two permissions to `Info.plist`. Follow the [Capacitor docs](https://capacitorjs.com/docs/ios/configuration#configuring-infoplist) and add permissions with the raw keys `NSCameraUsageDescription` and `NSMicrophoneUsageDescription`.
+You will need to add two permissions to `Info.plist`. Follow the [Capacitor docs](https://capacitorjs.com/docs/ios/configuration#configuring-infoplist) and add permissions with the raw keys `NSCameraUsageDescription` and `NSMicrophoneUsageDescription`. `NSMicrophoneUsageDescription` is only required, if audio will be used. Otherwise set the `disableAudio` option to `true`, which also disables the microphone permission request.
 
 ## Extra Web installation steps
-Add `import '@capacitor-community/camera-preview'` to you entry script in ionic on `app.module.ts`, so capacitor can register the web platform from the plugin
+
+Add `import { CameraPreview } from '@capacitor-community/camera-preview';` in the file where you want to use the plugin.
+
+then in html add `<div id="cameraPreview"></div>`
+
+and `CameraPreview.start({ parent: "cameraPreview"});` will work.
 
 
 # Methods
@@ -78,7 +98,7 @@ Starts the camera preview instance.
 | storeToFile | boolean       | (optional) Capture images to a file and return back the file path instead of returning base64 encoded data, default false. |
 | disableExifHeaderStripping | boolean       | (optional) Disable automatic rotation of the image, and let the browser deal with it, default true (applicable to the android and ios platforms only) |
 | enableHighResolution | boolean       | (optional) Defaults to false - iOS only - Activate high resolution image capture so that output images are from the highest resolution possible on the device |
-| disableAudio | boolean | (optional) Disables audio stream to prevent permission requests, default false. (applicable to web only) |
+| disableAudio | boolean | (optional) Disables audio stream to prevent permission requests, default false. (applicable to web and iOS only) |
 | lockAndroidOrientation | boolean | (optional) Locks device orientation when camera is showing, default false. (applicable to Android only) |
 | enableOpacity | boolean | (optional) Make the camera preview see-through. Ideal for augmented reality uses. Default false (applicable to Android and web only)
 | enableZoom | boolean | (optional) Set if you can pinch to zoom. Default false (applicable to the android and ios platforms only)
@@ -246,7 +266,7 @@ const CameraPreviewFlashMode: CameraPreviewFlashMode = 'torch';
 CameraPreview.setFlashMode(cameraPreviewFlashMode);
 ```
 
-### startRecordVideo(options)  ---- ANDROID only
+### startRecordVideo(options)  ---- ANDROID and iOS only
 
 <info>Start capturing video</info><br/>
 
@@ -260,13 +280,12 @@ const cameraPreviewOptions: CameraPreviewOptions = {
 CameraPreview.startRecordVideo(cameraPreviewOptions);
 ```
 
-### stopRecordVideo()  ---- ANDROID only
+### stopRecordVideo()  ---- ANDROID and iOS only
 
 <info>Finish capturing a video. The captured video will be returned as a file path and the video format is .mp4</info><br/>
 
 ```javascript
 const resultRecordVideo = await CameraPreview.stopRecordVideo();
-this.stopCamera();
 ```
 
 ### setOpacity(options: CameraOpacityOptions): Promise<{}>;  ---- ANDROID only
@@ -276,6 +295,14 @@ this.stopCamera();
 ```javascript
 const myCamera = CameraPreview.start({enableOpacity: true});
 myCamera.setOpacity({opacity: 0.4});
+```
+
+### isCameraStarted()  ---- ANDROID and iOS only
+
+<info>Check or detect if the camera has been started</info><br/>
+
+```javascript
+const { value } = await CameraPreview.isCameraStarted();
 ```
 
 # Settings

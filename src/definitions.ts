@@ -1,13 +1,12 @@
-
 export type CameraPosition = 'rear' | 'front';
 export interface CameraPreviewOptions {
   /** Parent element to attach the video preview element to (applicable to the web platform only) */
   parent?: string;
   /** Class name to add to the video preview element (applicable to the web platform only) */
   className?: string;
-  /** The preview width in pixels, default window.screen.width (applicable to the android and ios platforms only) */
+  /** The preview width in pixels, default window.screen.width */
   width?: number;
-  /** The preview height in pixels, default window.screen.height (applicable to the android and ios platforms only) */
+  /** The preview height in pixels, default window.screen.height */
   height?: number;
   /** The x origin, default 0 (applicable to the android and ios platforms only) */
   x?: number;
@@ -21,7 +20,7 @@ export interface CameraPreviewOptions {
   rotateWhenOrientationChanged?: boolean;
   /** Choose the camera to use 'front' or 'rear', default 'front' */
   position?: CameraPosition | string;
-  /** Defaults to false - Capture images to a file and return back the file path instead of returning base64 encoded data */
+  /** Defaults to false - Capture images to a file and return the file path instead of returning base64 encoded data */
   storeToFile?: boolean;
   /** Defaults to false - Android Only - Disable automatic rotation of the image, and let the browser deal with it (keep reading on how to achieve it) */
   disableExifHeaderStripping?: boolean;
@@ -31,18 +30,19 @@ export interface CameraPreviewOptions {
   disableAudio?: boolean;
   /**  Android Only - Locks device orientation when camera is showing. */
   lockAndroidOrientation?: boolean;
-  /** Defaults to false - Android and Web only.  Set if camea preview can change opacity. */
+  /** Defaults to false - Android and Web only.  Set if camera preview can change opacity. */
   enableOpacity?: boolean;
-  /** Defaults to false - Android only.  Set if camea preview will support pinch to zoom. */
+  /** Defaults to false - Android only.  Set if camera preview will support pinch to zoom. */
   enableZoom?: boolean;
-
 }
 export interface CameraPreviewPictureOptions {
   /** The picture height, optional, default 0 (Device default) */
   height?: number;
   /** The picture width, optional, default 0 (Device default) */
   width?: number;
-  /** The picture quality, 0 - 100, default 85 */
+  /** The picture quality, 0 - 100, default 85 on `iOS/Android`.
+   *
+   * If left undefined, the `web` implementation will export a PNG, otherwise a JPEG will be generated */
   quality?: number;
 }
 
@@ -54,19 +54,22 @@ export interface CameraSampleOptions {
 export type CameraPreviewFlashMode = 'off' | 'on' | 'auto' | 'red-eye' | 'torch';
 
 export interface CameraOpacityOptions {
- /** The percent opacity to set for camera view, default 1 */
-    opacity?: number;
+  /** The percent opacity to set for camera view, default 1 */
+  opacity?: number;
 }
 
 export interface CameraPreviewPlugin {
-  start(options: CameraPreviewOptions): Promise<{}>;
-  stop(): Promise<{}>;
+  start(options: CameraPreviewOptions): Promise<void>;
+  startRecordVideo(options: CameraPreviewOptions): Promise<void>;
+  stop(): Promise<void>;
+  stopRecordVideo(): Promise<void>;
   capture(options: CameraPreviewPictureOptions): Promise<{ value: string }>;
   captureSample(options: CameraSampleOptions): Promise<{ value: string }>;
   getSupportedFlashModes(): Promise<{
-    result: CameraPreviewFlashMode[]
+    result: CameraPreviewFlashMode[];
   }>;
-  setFlashMode(options: { flashMode: CameraPreviewFlashMode | string }): void;
-  flip(): void;
-  setOpacity(options: CameraOpacityOptions): Promise<{}>;
+  setFlashMode(options: { flashMode: CameraPreviewFlashMode | string }): Promise<void>;
+  flip(): Promise<void>;
+  setOpacity(options: CameraOpacityOptions): Promise<void>;
+  isCameraStarted(): Promise<{ value: boolean }>;
 }
