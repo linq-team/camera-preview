@@ -36,6 +36,8 @@ class CameraController: NSObject {
     var audioInput: AVCaptureDeviceInput?
 
     var zoomFactor: CGFloat = 1.0
+
+    var disableTapToFocus: Bool = false
 }
 
 extension CameraController {
@@ -445,6 +447,9 @@ extension CameraController: UIGestureRecognizerDelegate {
 
     @objc
     func handleTap(_ tap: UITapGestureRecognizer) {
+        if disableTapToFocus {
+            return
+        }
         guard let device = self.currentCameraPosition == .rear ? rearCamera : frontCamera else { return }
 
         let point = tap.location(in: tap.view)

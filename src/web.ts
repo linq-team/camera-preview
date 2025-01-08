@@ -185,4 +185,9 @@ export class CameraPreviewWeb extends WebPlugin implements CameraPreviewPlugin {
   async isCameraStarted(): Promise<{ value: boolean }> {
     throw this.unimplemented('Not implemented on web.');
   }
+
+  async focusPoint(): Promise<void> {
+    throw this.unimplemented('Not implemented on web.');
+  }
+
 }

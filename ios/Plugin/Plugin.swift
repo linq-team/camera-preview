@@ -22,6 +22,7 @@ public class CameraPreview: CAPPlugin {
     var enableZoom: Bool?
     var highResolutionOutput: Bool = false
     var disableAudio: Bool = false
+    var disableTapToFocus: Bool = false
 
     @objc func rotated() {
         let height = self.paddingBottom != nil ? self.height! - self.paddingBottom!: self.height!
@@ -67,6 +68,8 @@ public class CameraPreview: CAPPlugin {
         self.storeToFile = call.getBool("storeToFile") ?? false
         self.enableZoom = call.getBool("enableZoom") ?? false
         self.disableAudio = call.getBool("disableAudio") ?? false
+        self.disableTapToFocus = call.getBool("disableTapToFocus") ?? false
+        self.cameraController.disableTapToFocus = self.disableTapToFocus
 
         AVCaptureDevice.requestAccess(for: .video, completionHandler: { (granted: Bool) in
             guard granted else {
